@@ -1,38 +1,38 @@
 {
-  "name": "groutcho-monorepo",
-  "version": "3.1.3",
+  "name": "@hello10/diso",
+  "version": "4.0.0-beta.0",
+  "description": "Monorepo for the diso initiative — the @diso.io/* libraries and the diso.io / diso.mu sites",
   "license": "MIT",
   "private": true,
+  "type": "module",
   "author": {
     "name": "Stephen Handley",
     "email": "stephen@hello10.com",
     "url": "https://hello10.com"
   },
-  "devDependencies": {
-    "babel-eslint": "10.1.0",
-    "eslint": "7.14.0",
-    "eslint-config-airbnb-base": "14.2.1",
-    "eslint-plugin-import": "2.22.1",
-    "eslint-plugin-promise": "4.2.1",
-    "lerna": "3.22.1",
-    "microbundle": "0.12.4",
-    "mocha": "8.2.1",
-    "nyc": "15.1.0"
-  },
   "scripts": {
-    "bootstrap":   "yarn && lerna bootstrap",
-    "rebootstrap": "yarn clean && yarn bootstrap",
-    "build":       "lerna exec --parallel -- yarn build",
-    "clean":       "lerna exec --parallel -- yarn clean && rm -rf node_modules && rm -f yarn.lock",
-    "dev":         "lerna exec --parallel -- yarn dev",
-    "link:setup":  "lerna exec --parallel -- yarn link",
-    "lint":        "lerna exec --parallel -- yarn lint",
-    "rebuild":     "yarn rebootstrap && yarn build",
-    "test":        "lerna exec --parallel -- yarn test"
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "test": "pnpm --filter \"./packages/*\" test",
+    "lint": "eslint .",
+    "typecheck": "pnpm -r typecheck",
+    "site": "pnpm --filter diso-io dev",
+    "verify": "pnpm --filter \"./packages/*\" build && pnpm --filter \"./packages/*\" typecheck && pnpm lint && pnpm --filter \"./packages/*\" test",
+    "version:beta": "pnpm --filter \"./packages/*\" exec npm version prerelease --preid=beta --no-git-tag-version",
+    "version:patch": "pnpm --filter \"./packages/*\" exec npm version patch --no-git-tag-version",
+    "version:minor": "pnpm --filter \"./packages/*\" exec npm version minor --no-git-tag-version",
+    "release:beta": "pnpm verify && pnpm --filter \"./packages/*\" publish --tag beta --no-git-checks",
+    "release": "pnpm verify && pnpm --filter \"./packages/*\" publish --no-git-checks",
+    "clean": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules"
   },
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
-  }
+  "devDependencies": {
+    "@eslint/js": "^9.34.0",
+    "@types/node": "^24.3.0",
+    "eslint": "^9.34.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.41.0",
+    "vitest": "^3.2.4"
+  },
+  "packageManager": "pnpm@11.20.0"
 }
