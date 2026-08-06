@@ -1,7 +1,7 @@
 {
-  "name": "@diso.io/groutcho-lit",
+  "name": "@diso.io/groutcho-react",
   "version": "4.0.0-beta.0",
-  "description": "Lit bindings for groutcho — a ReactiveController, context, and router elements",
+  "description": "React bindings for groutcho — hooks, provider, and Link over the core store",
   "license": "MIT",
   "type": "module",
   "author": {
@@ -12,18 +12,16 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Hello10/groutcho.git",
-    "directory": "packages/lit"
+    "directory": "packages/groutcho/react"
   },
   "keywords": [
     "router",
-    "lit",
-    "web-components",
-    "reactive-controller",
+    "react",
+    "hooks",
+    "usesyncexternalstore",
     "groutcho"
   ],
-  "sideEffects": [
-    "**/elements.*"
-  ],
+  "sideEffects": false,
   "files": [
     "dist"
   ],
@@ -47,13 +45,15 @@
     "@diso.io/groutcho": "workspace:*"
   },
   "peerDependencies": {
-    "@lit/context": "^1.1.0",
-    "lit": "^3.0.0"
+    "react": ">=18.0.0"
   },
   "devDependencies": {
-    "@lit/context": "^1.1.6",
+    "@testing-library/react": "^16.3.0",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
     "happy-dom": "^19.0.2",
-    "lit": "^3.3.1"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "publishConfig": {
     "access": "public"
