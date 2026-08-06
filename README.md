@@ -6,9 +6,9 @@ works standalone in vanilla web, and thin **Lit** and **React** bindings.
 
 | Package | What |
 | --- | --- |
-| [`@diso.io/groutcho`](packages/core) | Core: `Router`, `Route`, `MatchResult`, `createRouter` store, history |
-| [`@diso.io/groutcho-lit`](packages/lit) | Lit `ReactiveController`, context, `<groutcho-outlet>` / `<groutcho-link>` |
-| [`@diso.io/groutcho-react`](packages/react) | Hooks (`useMatch`/`useGo`), `RouterProvider`, `Link` |
+| [`@diso.io/groutcho`](packages/groutcho/core) | Core: `Router`, `Route`, `MatchResult`, `createRouter` store, history |
+| [`@diso.io/groutcho-lit`](packages/groutcho/lit) | Lit `ReactiveController`, context, `<groutcho-outlet>` / `<groutcho-link>` |
+| [`@diso.io/groutcho-react`](packages/groutcho/react) | Hooks (`useMatch`/`useGo`), `RouterProvider`, `Link` |
 
 The core owns **all** matching and redirect logic and never touches the DOM —
 only `createBrowserHistory` does — so the same engine runs in the browser, Node,

@@ -36,4 +36,4 @@ class MyApp extends LitElement {
   clicks fall through.
 
 Re-exports the `groutcho` core for a single import surface. See the
-[monorepo README](../../README.md).
+[monorepo README](../../../README.md).

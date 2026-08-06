@@ -34,7 +34,7 @@ importers:
     dependencies:
       '@diso.io/groutcho-lit':
         specifier: workspace:*
-        version: link:../../packages/lit
+        version: link:../../packages/groutcho/lit
       '@lit/context':
         specifier: ^1.1.6
         version: 1.1.6
@@ -55,13 +55,13 @@ importers:
         specifier: ^7.1.0
         version: 7.3.6(@types/node@24.13.3)
 
-  packages/core:
+  packages/groutcho/core:
     dependencies:
       urlpattern-polyfill:
         specifier: ^10.1.0
         version: 10.1.0
 
-  packages/lit:
+  packages/groutcho/lit:
     dependencies:
       '@diso.io/groutcho':
         specifier: workspace:*
@@ -77,7 +77,7 @@ importers:
         specifier: ^3.3.1
         version: 3.3.3
 
-  packages/react:
+  packages/groutcho/react:
     dependencies:
       '@diso.io/groutcho':
         specifier: workspace:*

@@ -1,8 +1,7 @@
 {
-  "extends": "../../tsconfig.base.json",
+  "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
-    "experimentalDecorators": true,
-    "useDefineForClassFields": false,
+    "jsx": "react-jsx",
     "rootDir": ".",
     "outDir": "dist",
     "noEmit": true
