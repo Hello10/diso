@@ -1,0 +1,61 @@
+{
+  "name": "@diso.io/groutcho-lit",
+  "version": "4.0.0-beta.0",
+  "description": "Lit bindings for groutcho — a ReactiveController, context, and router elements",
+  "license": "MIT",
+  "type": "module",
+  "author": {
+    "name": "Stephen Handley",
+    "email": "stephen@hello10.com",
+    "url": "https://hello10.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hello10/groutcho.git",
+    "directory": "packages/lit"
+  },
+  "keywords": [
+    "router",
+    "lit",
+    "web-components",
+    "reactive-controller",
+    "groutcho"
+  ],
+  "sideEffects": [
+    "**/elements.*"
+  ],
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "@diso.io/groutcho": "workspace:*"
+  },
+  "peerDependencies": {
+    "@lit/context": "^1.1.0",
+    "lit": "^3.0.0"
+  },
+  "devDependencies": {
+    "@lit/context": "^1.1.6",
+    "happy-dom": "^19.0.2",
+    "lit": "^3.3.1"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
