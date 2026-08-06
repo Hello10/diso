@@ -1,0 +1,50 @@
+{
+  "name": "@diso.io/groutcho",
+  "version": "4.0.0-beta.0",
+  "description": "Declarative, framework-agnostic router with a URLPattern matching core and pluggable history",
+  "license": "MIT",
+  "type": "module",
+  "author": {
+    "name": "Stephen Handley",
+    "email": "stephen@hello10.com",
+    "url": "https://hello10.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hello10/groutcho.git",
+    "directory": "packages/core"
+  },
+  "keywords": [
+    "router",
+    "routing",
+    "urlpattern",
+    "isomorphic",
+    "history"
+  ],
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "urlpattern-polyfill": "^10.1.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
