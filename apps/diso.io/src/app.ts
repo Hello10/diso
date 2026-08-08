@@ -143,6 +143,7 @@ export class DisoApp extends LitElement {
           <groutcho-link .store=${store} to="Groutcho">groutcho</groutcho-link>
           <groutcho-link .store=${store} to="GroutchoLit">groutcho-lit</groutcho-link>
           <groutcho-link .store=${store} to="GroutchoReact">groutcho-react</groutcho-link>
+          <groutcho-link .store=${store} to="Bark">bark</groutcho-link>
         </nav>
       </header>
       <main>${this.#renderPage()}</main>
