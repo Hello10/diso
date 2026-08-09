@@ -27,6 +27,7 @@ const Home: Page = () => html`
       <li><a href="/groutcho" data-route><strong>groutcho</strong><span>framework-agnostic router core</span></a></li>
       <li><a href="/groutcho-lit" data-route><strong>groutcho-lit</strong><span>Lit bindings</span></a></li>
       <li><a href="/groutcho-react" data-route><strong>groutcho-react</strong><span>React bindings</span></a></li>
+      <li><a href="/bark" data-route><strong>bark</strong><span>observability: logs, timing, errors</span></a></li>
     </ul>
   </article>
 `;
@@ -83,6 +84,37 @@ function Outlet() {
     `
   );
 
+const BarkPage: Page = () =>
+  pkg(
+    '@diso.io/bark',
+    'Unified observability: logs, timing, and errors as correlated records.',
+    '@diso.io/bark',
+    html`
+      <p>
+        One shared request/user context — every record carries a <code>traceId</code>
+        (propagated via <code>traceparent</code>) so you can drill from an error to
+        everything about that request. Passive timing capture in the browser, spans +
+        <code>Server-Timing</code> on the Worker, full error serialization with
+        fingerprints. Zero dependencies.
+      </p>
+      <pre><code>import Bark from '@diso.io/bark';
+
+export default {
+  async fetch(req, env, ctx) {
+    const bark = Bark.start({ request: req });
+    bark.set({ userId });
+    const rows = await env.DB.prepare(sql).all();
+    bark.info('loaded', { count: rows.length });
+    return bark.finish({ response: Response.json(rows) });
+  }
+};</code></pre>
+      <p>
+        Filter with the <code>LOGGER</code> grammar:
+        <code>api*|info, -timing:*</code> — names, levels, wildcards, excludes.
+      </p>
+    `
+  );
+
 const NotFound: Page = () => html`
   <article>
     <h1>404</h1>
@@ -95,6 +127,7 @@ export const routes: Record<string, RouteConfig> = {
   Groutcho: { pattern: '/groutcho', page: Groutcho },
   GroutchoLit: { pattern: '/groutcho-lit', page: GroutchoLit },
   GroutchoReact: { pattern: '/groutcho-react', page: GroutchoReact },
+  Bark: { pattern: '/bark', page: BarkPage },
   NotFound: { pattern: '/404', page: NotFound }
 };
 
