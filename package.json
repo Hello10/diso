@@ -1,38 +1,42 @@
 {
-  "name": "@hello10/diso",
-  "version": "4.0.0-beta.0",
-  "description": "Monorepo for the diso initiative — the @diso.io/* libraries and the diso.io / diso.mu sites",
-  "license": "MIT",
-  "private": true,
-  "type": "module",
-  "author": {
-    "name": "Stephen Handley",
-    "email": "stephen@hello10.com",
-    "url": "https://hello10.com"
-  },
-  "scripts": {
-    "build": "pnpm -r build",
-    "dev": "pnpm -r --parallel dev",
-    "test": "pnpm --filter \"./packages/**\" test",
-    "lint": "eslint .",
-    "typecheck": "pnpm -r typecheck",
-    "site": "pnpm --filter diso-io dev",
-    "verify": "pnpm --filter \"./packages/**\" build && pnpm --filter \"./packages/**\" typecheck && pnpm lint && pnpm --filter \"./packages/**\" test",
-    "version:beta": "pnpm --filter \"./packages/**\" exec npm version prerelease --preid=beta --no-git-tag-version",
-    "version:patch": "pnpm --filter \"./packages/**\" exec npm version patch --no-git-tag-version",
-    "version:minor": "pnpm --filter \"./packages/**\" exec npm version minor --no-git-tag-version",
-    "release:beta": "pnpm verify && pnpm --filter \"./packages/**\" publish --tag beta --no-git-checks",
-    "release": "pnpm verify && pnpm --filter \"./packages/**\" publish --no-git-checks",
-    "clean": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.34.0",
-    "@types/node": "^24.3.0",
-    "eslint": "^9.34.0",
-    "tsup": "^8.5.0",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.41.0",
-    "vitest": "^3.2.4"
-  },
-  "packageManager": "pnpm@11.20.0"
+	"name": "@hello10/diso",
+	"version": "4.0.0-beta.0",
+	"description": "Monorepo for the diso initiative — the @diso.io/* libraries and the diso.io / diso.mu sites",
+	"license": "MIT",
+	"private": true,
+	"type": "module",
+	"author": {
+		"name": "Stephen Handley",
+		"email": "stephen@hello10.com",
+		"url": "https://hello10.com"
+	},
+	"scripts": {
+		"build": "turbo run build",
+		"dev": "turbo run dev",
+		"test": "turbo run test",
+		"lint": "biome check .",
+		"format": "biome format --write .",
+		"fix": "biome check --write .",
+		"typecheck": "turbo run typecheck",
+		"docs": "turbo run docs",
+		"site": "pnpm --filter diso-io dev",
+		"verify": "turbo run build typecheck test && biome check .",
+		"version:beta": "pnpm --filter \"./packages/**\" exec npm version prerelease --preid=beta --no-git-tag-version",
+		"version:patch": "pnpm --filter \"./packages/**\" exec npm version patch --no-git-tag-version",
+		"version:minor": "pnpm --filter \"./packages/**\" exec npm version minor --no-git-tag-version",
+		"release:beta": "pnpm verify && pnpm --filter \"./packages/**\" publish --tag beta --no-git-checks",
+		"release": "pnpm verify && pnpm --filter \"./packages/**\" publish --no-git-checks",
+		"clean": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.5.7",
+		"@hello10/config-biome": "^1.0.0",
+		"@hello10/config-typescript": "^1.0.0",
+		"@types/node": "^24.3.0",
+		"tsup": "^8.5.0",
+		"turbo": "^2.10.9",
+		"typescript": "^5.9.2",
+		"vitest": "^3.2.4"
+	},
+	"packageManager": "pnpm@11.20.0"
 }
