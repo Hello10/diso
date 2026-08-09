@@ -26,14 +26,20 @@ npm scope; each package family has its own README with full docs.
 
 ```bash
 pnpm install
-pnpm build       # all packages (tsup -> ESM + .d.ts)
-pnpm test        # all package test suites (vitest)
-pnpm typecheck
-pnpm lint
+pnpm build       # turbo: all packages (tsup -> ESM + .d.ts), cached
+pnpm test        # turbo: all test suites (vitest), cached
+pnpm typecheck   # turbo: tsc --noEmit (depends on upstream builds)
+pnpm lint        # biome check
+pnpm format      # biome format --write
+pnpm fix         # biome check --write (format + safe lint fixes)
 pnpm site        # run the diso.io docs site locally
+pnpm verify      # build + typecheck + test + lint (the release gate)
 ```
 
-Stack: pnpm workspaces · TypeScript (strict) · tsup · vitest · typescript-eslint.
+Stack: pnpm workspaces · [Turborepo](https://turborepo.dev) task graph/caching ·
+TypeScript (strict) · tsup · vitest · [Biome](https://biomejs.dev) lint + format.
+Shared configs come from [`hello10/configs`](https://github.com/hello10/configs)
+(`@hello10/config-typescript`, `@hello10/config-biome`).
 
 ## Release
 

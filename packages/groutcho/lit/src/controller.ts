@@ -1,9 +1,14 @@
-import { createRouter } from '@diso.io/groutcho';
-import type { Input, MatchResult, RouterStore, RouterStoreConfig } from '@diso.io/groutcho';
-import type { ReactiveController, ReactiveControllerHost } from 'lit';
+import type {
+	Input,
+	MatchResult,
+	RouterStore,
+	RouterStoreConfig,
+} from "@diso.io/groutcho";
+import { createRouter } from "@diso.io/groutcho";
+import type { ReactiveController, ReactiveControllerHost } from "lit";
 
 function isStore(value: RouterStore | RouterStoreConfig): value is RouterStore {
-  return typeof (value as RouterStore).getSnapshot === 'function';
+	return typeof (value as RouterStore).getSnapshot === "function";
 }
 
 /**
@@ -22,42 +27,45 @@ function isStore(value: RouterStore | RouterStoreConfig): value is RouterStore {
  * ```
  */
 export class RouterController implements ReactiveController {
-  readonly store: RouterStore;
+	readonly store: RouterStore;
 
-  #host: ReactiveControllerHost;
-  #unsubscribe?: () => void;
-  #ownsStore: boolean;
+	#host: ReactiveControllerHost;
+	#unsubscribe?: () => void;
+	#ownsStore: boolean;
 
-  constructor(host: ReactiveControllerHost, source: RouterStore | RouterStoreConfig) {
-    this.#host = host;
-    if (isStore(source)) {
-      this.store = source;
-      this.#ownsStore = false;
-    } else {
-      this.store = createRouter(source);
-      this.#ownsStore = true;
-    }
-    host.addController(this);
-  }
+	constructor(
+		host: ReactiveControllerHost,
+		source: RouterStore | RouterStoreConfig,
+	) {
+		this.#host = host;
+		if (isStore(source)) {
+			this.store = source;
+			this.#ownsStore = false;
+		} else {
+			this.store = createRouter(source);
+			this.#ownsStore = true;
+		}
+		host.addController(this);
+	}
 
-  /** The current match snapshot. */
-  get match(): MatchResult {
-    return this.store.getSnapshot();
-  }
+	/** The current match snapshot. */
+	get match(): MatchResult {
+		return this.store.getSnapshot();
+	}
 
-  /** Navigate. Bound so it can be passed as a handler. */
-  go = (input: Input): MatchResult => this.store.go(input);
+	/** Navigate. Bound so it can be passed as a handler. */
+	go = (input: Input): MatchResult => this.store.go(input);
 
-  hostConnected(): void {
-    this.#unsubscribe = this.store.subscribe(() => this.#host.requestUpdate());
-  }
+	hostConnected(): void {
+		this.#unsubscribe = this.store.subscribe(() => this.#host.requestUpdate());
+	}
 
-  hostDisconnected(): void {
-    this.#unsubscribe?.();
-    this.#unsubscribe = undefined;
-    // Only tear down a store this controller created.
-    if (this.#ownsStore) {
-      this.store.destroy();
-    }
-  }
+	hostDisconnected(): void {
+		this.#unsubscribe?.();
+		this.#unsubscribe = undefined;
+		// Only tear down a store this controller created.
+		if (this.#ownsStore) {
+			this.store.destroy();
+		}
+	}
 }

@@ -1,27 +1,26 @@
-export { RouterController } from './controller';
-export { routerContext } from './context';
-export { GroutchoOutlet, GroutchoLink, type RenderPage } from './elements';
-
+export type {
+	History,
+	Input,
+	InputObject,
+	Params,
+	RedirectResult,
+	RedirectTest,
+	RouteConfig,
+	RouteInput,
+	RouteRedirect,
+	RouterConfig,
+	RouterStore,
+	RouterStoreConfig,
+} from "@diso.io/groutcho";
 // Re-export the core so Lit consumers have a single import surface.
 export {
-  createRouter,
-  createBrowserHistory,
-  createMemoryHistory,
-  Router,
-  Route,
-  MatchResult
-} from '@diso.io/groutcho';
-export type {
-  History,
-  Input,
-  InputObject,
-  Params,
-  RedirectResult,
-  RedirectTest,
-  RouteConfig,
-  RouteInput,
-  RouteRedirect,
-  RouterConfig,
-  RouterStore,
-  RouterStoreConfig
-} from '@diso.io/groutcho';
+	createBrowserHistory,
+	createMemoryHistory,
+	createRouter,
+	MatchResult,
+	Route,
+	Router,
+} from "@diso.io/groutcho";
+export { routerContext } from "./context";
+export { RouterController } from "./controller";
+export { GroutchoLink, GroutchoOutlet, type RenderPage } from "./elements";

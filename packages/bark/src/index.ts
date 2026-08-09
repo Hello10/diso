@@ -1,28 +1,35 @@
-export { Bark, Bark as default, type SpanHandle } from './Logger';
-export { configure, resetConfig, pretty, json, consoleSink, type BarkConfig } from './config';
+export { resetCollectors } from "./collectors";
 export {
-  serializers,
-  serializeError,
-  serializeRequest,
-  serializeResponse,
-  type FieldSerializer
-} from './serialize';
-export { parseRules, makeMatcher, type Rules } from './matcher';
+	type BarkConfig,
+	configure,
+	consoleSink,
+	json,
+	pretty,
+	resetConfig,
+} from "./config";
 export {
-  createContext,
-  parseTraceparent,
-  makeTraceparent,
-  serverTimingHeader,
-  type Context,
-  type Span
-} from './context';
-export { resetCollectors } from './collectors';
+	type Context,
+	createContext,
+	makeTraceparent,
+	parseTraceparent,
+	type Span,
+	serverTimingHeader,
+} from "./context";
+export { Bark, Bark as default, type SpanHandle } from "./Logger";
+export { makeMatcher, parseRules, type Rules } from "./matcher";
 export {
-  LEVELS,
-  type BarkRecord,
-  type Fields,
-  type Formatter,
-  type Level,
-  type RecordKind,
-  type Sink
-} from './record';
+	type BarkRecord,
+	type Fields,
+	type Formatter,
+	LEVELS,
+	type Level,
+	type RecordKind,
+	type Sink,
+} from "./record";
+export {
+	type FieldSerializer,
+	serializeError,
+	serializeRequest,
+	serializeResponse,
+	serializers,
+} from "./serialize";

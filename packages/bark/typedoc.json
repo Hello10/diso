@@ -1,9 +1,9 @@
 {
-  "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["src/index.ts"],
-  "out": "docs",
-  "name": "@diso.io/bark",
-  "readme": "README.md",
-  "excludePrivate": true,
-  "excludeInternal": true
+	"$schema": "https://typedoc.org/schema.json",
+	"entryPoints": ["src/index.ts"],
+	"out": "docs",
+	"name": "@diso.io/bark",
+	"readme": "README.md",
+	"excludePrivate": true,
+	"excludeInternal": true
 }

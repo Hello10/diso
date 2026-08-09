@@ -1,18 +1,22 @@
-import { createBrowserHistory, RouterController, type MatchResult } from '@diso.io/groutcho-lit';
-import { LitElement, css, html, nothing } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import {
+	createBrowserHistory,
+	type MatchResult,
+	RouterController,
+} from "@diso.io/groutcho-lit";
+import { css, html, LitElement, nothing } from "lit";
+import { customElement } from "lit/decorators.js";
 
-import { redirects, routes } from './routes';
+import { redirects, routes } from "./routes";
 
-@customElement('diso-app')
+@customElement("diso-app")
 export class DisoApp extends LitElement {
-  private router = new RouterController(this, {
-    routes,
-    redirects,
-    history: createBrowserHistory()
-  });
+	private router = new RouterController(this, {
+		routes,
+		redirects,
+		history: createBrowserHistory(),
+	});
 
-  static override styles = css`
+	static override styles = css`
     :host {
       display: block;
       min-height: 100vh;
@@ -100,43 +104,43 @@ export class DisoApp extends LitElement {
     }
   `;
 
-  override connectedCallback(): void {
-    super.connectedCallback();
-    // Intercept internal anchor clicks (composed events cross the shadow
-    // boundary) so plain <a href="/…"> links navigate via the router too.
-    window.addEventListener('click', this.#onClick);
-  }
+	override connectedCallback(): void {
+		super.connectedCallback();
+		// Intercept internal anchor clicks (composed events cross the shadow
+		// boundary) so plain <a href="/…"> links navigate via the router too.
+		window.addEventListener("click", this.#onClick);
+	}
 
-  override disconnectedCallback(): void {
-    super.disconnectedCallback();
-    window.removeEventListener('click', this.#onClick);
-  }
+	override disconnectedCallback(): void {
+		super.disconnectedCallback();
+		window.removeEventListener("click", this.#onClick);
+	}
 
-  #onClick = (event: MouseEvent): void => {
-    if (
-      event.defaultPrevented ||
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey
-    ) {
-      return;
-    }
-    const anchor = event
-      .composedPath()
-      .find((el): el is HTMLAnchorElement => el instanceof HTMLAnchorElement);
-    const href = anchor?.getAttribute('href');
-    if (!href || !href.startsWith('/')) {
-      return; // external or non-navigational
-    }
-    event.preventDefault();
-    this.router.go(href);
-  };
+	#onClick = (event: MouseEvent): void => {
+		if (
+			event.defaultPrevented ||
+			event.button !== 0 ||
+			event.metaKey ||
+			event.ctrlKey ||
+			event.shiftKey ||
+			event.altKey
+		) {
+			return;
+		}
+		const anchor = event
+			.composedPath()
+			.find((el): el is HTMLAnchorElement => el instanceof HTMLAnchorElement);
+		const href = anchor?.getAttribute("href");
+		if (!href?.startsWith("/")) {
+			return; // external or non-navigational
+		}
+		event.preventDefault();
+		this.router.go(href);
+	};
 
-  override render(): unknown {
-    const { store } = this.router;
-    return html`
+	override render(): unknown {
+		const { store } = this.router;
+		return html`
       <header>
         <a class="brand" href="/">diso.io</a>
         <nav>
@@ -149,20 +153,22 @@ export class DisoApp extends LitElement {
       <main>${this.#renderPage()}</main>
       <footer>by <a href="https://hello10.com">Hello10</a></footer>
     `;
-  }
+	}
 
-  // Render the current route's page inline (in this element's shadow root) so
-  // the shared page styles above apply. Still fully driven by the router: the
-  // RouterController re-renders this on every navigation.
-  #renderPage(): unknown {
-    const { match } = this.router;
-    const page = match.route?.page;
-    return typeof page === 'function' ? (page as (m: MatchResult) => unknown)(match) : nothing;
-  }
+	// Render the current route's page inline (in this element's shadow root) so
+	// the shared page styles above apply. Still fully driven by the router: the
+	// RouterController re-renders this on every navigation.
+	#renderPage(): unknown {
+		const { match } = this.router;
+		const page = match.route?.page;
+		return typeof page === "function"
+			? (page as (m: MatchResult) => unknown)(match)
+			: nothing;
+	}
 }
 
 declare global {
-  interface HTMLElementTagNameMap {
-    'diso-app': DisoApp;
-  }
+	interface HTMLElementTagNameMap {
+		"diso-app": DisoApp;
+	}
 }

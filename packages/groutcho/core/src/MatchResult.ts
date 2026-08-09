@@ -1,12 +1,12 @@
-import type { Route } from './Route';
-import type { InputObject, Params } from './types';
+import type { Route } from "./Route";
+import type { InputObject, Params } from "./types";
 
 export interface MatchResultInit {
-  input: InputObject;
-  route?: Route | null;
-  url?: string | null;
-  params?: Params;
-  redirect?: boolean;
+	input: InputObject;
+	route?: Route | null;
+	url?: string | null;
+	params?: Params;
+	redirect?: boolean;
 }
 
 /**
@@ -15,31 +15,37 @@ export interface MatchResultInit {
  * match that triggered it.
  */
 export class MatchResult {
-  input: InputObject;
-  route: Route | null;
-  params: Params;
-  redirect: boolean;
-  original: MatchResult | null;
-  url: string;
+	input: InputObject;
+	route: Route | null;
+	params: Params;
+	redirect: boolean;
+	original: MatchResult | null;
+	url: string;
 
-  constructor({ input, route = null, url = null, params = {}, redirect = false }: MatchResultInit) {
-    this.input = input;
-    this.route = route;
-    this.params = params;
-    this.redirect = redirect;
-    this.original = null;
-    if (url != null) {
-      this.url = url;
-    } else if (route) {
-      this.url = route.buildUrl(params);
-    } else {
-      throw new Error('MatchResult requires either a url or a route');
-    }
-  }
+	constructor({
+		input,
+		route = null,
+		url = null,
+		params = {},
+		redirect = false,
+	}: MatchResultInit) {
+		this.input = input;
+		this.route = route;
+		this.params = params;
+		this.redirect = redirect;
+		this.original = null;
+		if (url != null) {
+			this.url = url;
+		} else if (route) {
+			this.url = route.buildUrl(params);
+		} else {
+			throw new Error("MatchResult requires either a url or a route");
+		}
+	}
 
-  /** Mark this result as a redirect, recording the original match it came from. */
-  isRedirect({ original }: { original: MatchResult | false }): void {
-    this.redirect = true;
-    this.original = original || null;
-  }
+	/** Mark this result as a redirect, recording the original match it came from. */
+	isRedirect({ original }: { original: MatchResult | false }): void {
+		this.redirect = true;
+		this.original = original || null;
+	}
 }
