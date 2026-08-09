@@ -1,5 +1,7 @@
 # @diso.io/bark
 
+![bark](bark.jpg)
+
 Unified observability for the diso stack: **logs, timing, and errors as
 correlated structured records** over one shared request/user context. Zero
 dependencies, isomorphic (browser · Cloudflare Workers · Node), tree-shakeable
