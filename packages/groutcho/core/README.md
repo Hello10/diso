@@ -29,5 +29,5 @@ store.go('/show/hi');
 **Exports:** `createRouter`, `createBrowserHistory`, `createMemoryHistory`,
 `Router`, `Route`, `MatchResult`, `logger`, and all types.
 
-See the [monorepo README](../../../README.md) for concepts and the Lit/React
+See the [groutcho family README](../README.md) for concepts and the Lit/React
 bindings.
