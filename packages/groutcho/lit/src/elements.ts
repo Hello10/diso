@@ -1,7 +1,10 @@
 import type {
+	Component,
 	Input,
 	MatchResult,
 	Params,
+	Route,
+	RouteConfig,
 	RouterStore,
 } from "@diso.io/groutcho";
 import { consume } from "@lit/context";
@@ -10,8 +13,17 @@ import { customElement, property } from "lit/decorators.js";
 
 import { routerContext } from "./context";
 
+// Naming: element tags use the `diso-` namespace shared by all `@diso.io/*`
+// libraries. Do not use per-library prefixes (no `<groutcho-*>`).
+
 /** How an outlet turns a match into renderable content. */
 export type RenderPage = (match: MatchResult) => unknown;
+
+/**
+ * Layout function shape. Receives the current match and the inner content
+ * (already-rendered page or nested layout). Layouts compose outermost-first.
+ */
+export type LayoutFn = (match: MatchResult, children: unknown) => unknown;
 
 /**
  * Base class shared by the router elements: resolves a store from an explicit
@@ -61,17 +73,43 @@ abstract class RouterElement extends LitElement {
 	}
 }
 
+function callPage(page: Component, match: MatchResult): unknown {
+	if (typeof page === "function") {
+		return (page as RenderPage)(match);
+	}
+	return (page as unknown) ?? nothing;
+}
+
+function walkLayouts(
+	route: Route | null,
+	inner: unknown,
+	match: MatchResult,
+): unknown {
+	const layout = route?.layout as RouteConfig["layout"] | undefined;
+	if (!layout) return inner;
+	const chain = Array.isArray(layout) ? layout : [layout];
+	// Outermost first: fold right so index 0 wraps everything else. Layouts are
+	// `(match, children) => unknown` — see `LayoutFn`.
+	return chain.reduceRight<unknown>(
+		(child, L) => (L as LayoutFn)(match, child),
+		inner,
+	);
+}
+
 /**
- * Renders the page for the current match. By default a route's `page` is called
- * as `(match) => unknown` when it's a function, otherwise rendered directly.
- * Override rendering with the `.renderPage` property.
+ * Renders the page for the current match, walking `route.layout` if present.
+ * Layout functions receive the match plus a `children` slot; typical usage:
+ *
+ * ```ts
+ * const Layout = (m) => html`<nav>...</nav>${m.children}`;
+ * ```
  *
  * ```html
- * <groutcho-outlet .store=${store}></groutcho-outlet>
+ * <diso-outlet .store=${store}></diso-outlet>
  * ```
  */
-@customElement("groutcho-outlet")
-export class GroutchoOutlet extends RouterElement {
+@customElement("diso-outlet")
+export class DisoOutlet extends RouterElement {
 	/** Optional custom renderer; overrides the default page handling. */
 	@property({ attribute: false }) renderPage?: RenderPage;
 
@@ -81,14 +119,53 @@ export class GroutchoOutlet extends RouterElement {
 			return nothing;
 		}
 		const match = router.getSnapshot();
+		// If the current match carries an error, render the route's or the
+		// store's errorPage instead of the page.
+		if (match.error) {
+			const errPage =
+				(match.route?.errorPage as Component | undefined) ?? router.errorPage;
+			if (errPage) return callPage(errPage, match);
+		}
 		if (this.renderPage) {
 			return this.renderPage(match);
 		}
-		const page = match.route?.page;
-		if (typeof page === "function") {
-			return (page as RenderPage)(match);
+		try {
+			const inner = callPage(match.route?.page as Component, match);
+			return walkLayouts(match.route, inner, match);
+		} catch (error) {
+			router.setError({
+				message: error instanceof Error ? error.message : String(error),
+				cause: error,
+			});
+			const errPage =
+				(match.route?.errorPage as Component | undefined) ?? router.errorPage;
+			return errPage ? callPage(errPage, match) : nothing;
 		}
-		return (page as unknown) ?? nothing;
+	}
+}
+
+interface AnchorTargetProps {
+	to?: string;
+	params?: Params;
+	input?: Input;
+}
+
+function buildInput(el: AnchorTargetProps): Input {
+	if (el.input !== undefined) {
+		return el.input;
+	}
+	if (el.params && el.to && !el.to.includes("/")) {
+		return { route: { name: el.to, params: el.params } };
+	}
+	return el.to ?? "";
+}
+
+function buildHref(router: RouterStore | undefined, target: Input): string {
+	if (!router) return typeof target === "string" ? target || "#" : "#";
+	try {
+		return router.match(target).url;
+	} catch {
+		return typeof target === "string" ? target || "#" : "#";
 	}
 }
 
@@ -98,12 +175,12 @@ export class GroutchoOutlet extends RouterElement {
  * Modifier/middle clicks fall through to default browser behavior.
  *
  * ```html
- * <groutcho-link to="Home">Home</groutcho-link>
- * <groutcho-link to="/show/hi">Show</groutcho-link>
+ * <diso-link to="Home">Home</diso-link>
+ * <diso-link to="/show/hi">Show</diso-link>
  * ```
  */
-@customElement("groutcho-link")
-export class GroutchoLink extends RouterElement {
+@customElement("diso-link")
+export class DisoLink extends RouterElement {
 	/** A url or route name to navigate to. */
 	@property() to = "";
 
@@ -113,29 +190,15 @@ export class GroutchoLink extends RouterElement {
 	/** A full input object; takes precedence over `to`/`params`. */
 	@property({ attribute: false }) input?: Input;
 
-	private get target(): Input {
-		if (this.input !== undefined) {
-			return this.input;
-		}
-		if (this.params && this.to && !this.to.includes("/")) {
-			return { route: { name: this.to, params: this.params } };
-		}
-		return this.to;
+	protected get target(): Input {
+		return buildInput(this);
 	}
 
-	private href(): string {
-		const router = this.router;
-		if (!router) {
-			return this.to || "#";
-		}
-		try {
-			return router.match(this.target).url;
-		} catch {
-			return this.to || "#";
-		}
+	protected href(): string {
+		return buildHref(this.router, this.target);
 	}
 
-	private onClick = (event: MouseEvent): void => {
+	protected onClick = (event: MouseEvent): void => {
 		if (
 			event.defaultPrevented ||
 			event.button !== 0 ||
@@ -147,9 +210,7 @@ export class GroutchoLink extends RouterElement {
 			return;
 		}
 		const router = this.router;
-		if (!router) {
-			return;
-		}
+		if (!router) return;
 		event.preventDefault();
 		router.go(this.target);
 	};
@@ -159,9 +220,51 @@ export class GroutchoLink extends RouterElement {
 	}
 }
 
+/**
+ * A `<diso-link>` that applies `activeClass` to its `<a>` when the current
+ * match refers to the same route (name-shaped `to`) or matches the pathname
+ * (path-shaped `to`). Use `activeExact` to require exact path equality rather
+ * than a prefix match.
+ *
+ * ```html
+ * <diso-nav-link to="Home" active-class="on">Home</diso-nav-link>
+ * ```
+ */
+@customElement("diso-nav-link")
+export class DisoNavLink extends DisoLink {
+	/** Class name added to the `<a>` when active. Defaults to `"active"`. */
+	@property({ attribute: "active-class" }) activeClass = "active";
+
+	/** Match strictly against the current pathname / route-name (no prefix). */
+	@property({ attribute: "active-exact", type: Boolean }) activeExact = false;
+
+	private isActive(match: MatchResult): boolean {
+		if (!this.to) return false;
+		if (this.to.includes("/")) {
+			const path = (match.url ?? "").split("?")[0] ?? "";
+			return this.activeExact
+				? path === this.to
+				: path === this.to || path.startsWith(`${this.to}/`);
+		}
+		return match.route?.name === this.to;
+	}
+
+	override render(): TemplateResult {
+		const router = this.router;
+		const match = router?.getSnapshot();
+		const active = match ? this.isActive(match) : false;
+		return html`<a
+			href=${this.href()}
+			class=${active ? this.activeClass : ""}
+			@click=${this.onClick}
+			><slot></slot></a>`;
+	}
+}
+
 declare global {
 	interface HTMLElementTagNameMap {
-		"groutcho-outlet": GroutchoOutlet;
-		"groutcho-link": GroutchoLink;
+		"diso-outlet": DisoOutlet;
+		"diso-link": DisoLink;
+		"diso-nav-link": DisoNavLink;
 	}
 }

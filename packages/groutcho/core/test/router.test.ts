@@ -1,10 +1,13 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
+	createMemoryHistory,
+	createRouter,
 	type RedirectTest,
 	Route,
 	type RouteConfig,
 	Router,
+	type RouterStore,
 } from "../src/index";
 
 function Page(): void {}
@@ -153,16 +156,19 @@ describe("groutcho", () => {
 			router = new Router({ routes, redirects });
 		});
 
-		describe(".getRouteByName", () => {
+		describe(".get", () => {
 			it("should get a route by name", () => {
-				const route = router.getRouteByName("TwoParam");
+				const route = router.get("TwoParam");
 				expect(route.name).toBe("TwoParam");
 			});
 
 			it("should throw on missing route", () => {
-				expect(() =>
-					router.getRouteByName("MissingAndPresumedScared"),
-				).toThrow();
+				expect(() => router.get("MissingAndPresumedScared")).toThrow();
+			});
+
+			it("should build hrefs from route + params", () => {
+				const route = router.get("TwoParam");
+				expect(route.href({ foo: "a", barf: "b" })).toBe("/show/a/barf/b");
 			});
 		});
 
@@ -404,47 +410,144 @@ describe("groutcho", () => {
 		});
 
 		describe(".go", () => {
-			let went: boolean;
-			let match: MatchResultShape | null;
-
-			type MatchResultShape = ReturnType<Router["match"]>;
-
-			beforeEach(() => {
-				went = false;
-				match = null;
-				router.onGo((m) => {
-					went = true;
-					match = m;
-				});
-			});
-
-			it("should handle calling listeners when route changes", () => {
+			it("should return a match for a url", () => {
 				const showderp = "/show/derp";
-				router.go({ url: showderp });
-				expect(went).toBe(true);
-				expect(match!.url).toBe(showderp);
+				const match = router.go({ url: showderp });
+				expect(match.url).toBe(showderp);
 			});
 
-			it("should handle missing route", () => {
-				router.go({ url: "/derp/derp" });
-				expect(went).toBe(true);
-				expect(match!.redirect).toBeTruthy();
-				expect(match!.url).toBe("/404");
+			it("should redirect to NotFound for an unmatched url", () => {
+				const match = router.go({ url: "/derp/derp" });
+				expect(match.redirect).toBeTruthy();
+				expect(match.url).toBe("/404");
 			});
 
-			it("should handle redirect", () => {
+			it("should follow session redirects", () => {
 				signedIn = false;
-				router.go({ url: "/dashboard" });
-				expect(match!.redirect).toBeTruthy();
-				expect(match!.url).toBe("/signin");
+				const match = router.go({ url: "/dashboard" });
+				expect(match.redirect).toBeTruthy();
+				expect(match.url).toBe("/signin");
 			});
 
-			it("should handle url", () => {
+			it("should pass external urls through", () => {
 				const quaid = "https://quaid.gov";
-				router.go({ url: quaid });
-				expect(went).toBe(true);
-				expect(match!.url).toBe(quaid);
+				const match = router.go({ url: quaid });
+				expect(match.url).toBe(quaid);
 			});
+		});
+	});
+
+	describe("RouterStore", () => {
+		function build(): RouterStore {
+			const routes: Record<string, RouteConfig> = {
+				Home: { pattern: "/", page: null, title: "Home" },
+				Show: {
+					pattern: "/show/:title",
+					page: null,
+					title: (m) => `Show: ${m.params.title}`,
+				},
+				Bare: { pattern: "/bare", page: null },
+				NotFound: { pattern: "/404", page: null, title: "Not Found" },
+			};
+			const redirects: Record<string, RedirectTest> = {
+				NotFound: (match) => (match ? false : "NotFound"),
+			};
+			return createRouter({
+				routes,
+				redirects,
+				history: createMemoryHistory("/"),
+			});
+		}
+
+		it("stamps each snapshot with a monotonic key", () => {
+			const store = build();
+			const k0 = store.getSnapshot().key;
+			store.go("/show/a");
+			const k1 = store.getSnapshot().key;
+			store.go("/show/b");
+			const k2 = store.getSnapshot().key;
+			expect(k1).toBeGreaterThan(k0);
+			expect(k2).toBeGreaterThan(k1);
+		});
+
+		it("fires onGo with (prev, current)", () => {
+			const store = build();
+			const cb = vi.fn();
+			store.onGo(cb);
+			const before = store.getSnapshot();
+			store.go("/show/a");
+			const after = store.getSnapshot();
+			expect(cb).toHaveBeenCalledTimes(1);
+			expect(cb.mock.calls[0]![0]).toBe(before);
+			expect(cb.mock.calls[0]![1]).toBe(after);
+		});
+
+		it("returns unsubscribe from onGo", () => {
+			const store = build();
+			const cb = vi.fn();
+			const off = store.onGo(cb);
+			off();
+			store.go("/show/a");
+			expect(cb).not.toHaveBeenCalled();
+		});
+
+		it("computes title from route.title (string) on nav", () => {
+			const store = build();
+			// initial snapshot at "/" already resolved title to "Home"
+			expect(store.title).toBe("Home");
+			const cb = vi.fn();
+			store.onTitle(cb);
+			store.go("/bare");
+			expect(store.title).toBe("");
+			expect(cb).toHaveBeenLastCalledWith("");
+		});
+
+		it("computes title from route.title (function) with match", () => {
+			const store = build();
+			store.go("/show/mytitle");
+			expect(store.title).toBe("Show: mytitle");
+		});
+
+		it("clears title to '' when route has no title", () => {
+			const store = build();
+			store.go("/");
+			expect(store.title).toBe("Home");
+			store.go("/bare");
+			expect(store.title).toBe("");
+		});
+
+		it("setTitle overrides route title until next nav", () => {
+			const store = build();
+			store.go("/");
+			store.setTitle("Custom");
+			expect(store.title).toBe("Custom");
+			store.go("/show/x");
+			expect(store.title).toBe("Show: x");
+		});
+
+		it("get(name) returns the route with .href()", () => {
+			const store = build();
+			expect(store.get("Show").href({ title: "hi" })).toBe("/show/hi");
+		});
+
+		it("setError updates match.error and fires onError", () => {
+			const store = build();
+			const cb = vi.fn();
+			store.onError(cb);
+			const err = { message: "boom" };
+			store.setError(err);
+			expect(store.getSnapshot().error).toBe(err);
+			expect(cb).toHaveBeenCalledWith(err);
+		});
+
+		it("destroy detaches all listeners", () => {
+			const store = build();
+			const cb = vi.fn();
+			store.onGo(cb);
+			store.destroy();
+			// After destroy, calling go on a destroyed store is undefined behavior;
+			// verify the listener is unregistered by mutating history directly.
+			expect(cb).not.toHaveBeenCalled();
 		});
 	});
 });

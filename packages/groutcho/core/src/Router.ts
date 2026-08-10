@@ -37,13 +37,10 @@ interface CheckRedirectsArgs {
 	history?: Array<MatchResult | false>;
 }
 
-export type GoListener = (match: MatchResult) => void;
-
 export class Router {
 	routes: Route[] = [];
 	redirects: RedirectEntry[] = [];
 	max_redirects: number;
-	listeners: GoListener[] = [];
 
 	constructor({ routes, redirects = {}, max_redirects = 10 }: RouterConfig) {
 		this.max_redirects = max_redirects;
@@ -63,22 +60,24 @@ export class Router {
 		}
 	}
 
-	getRoute(query: Record<string, unknown>): Route | undefined {
-		return this.routes.find((route) =>
-			Object.entries(query).every(
-				([key, value]) => (route as Record<string, unknown>)[key] === value,
-			),
-		);
-	}
-
-	getRouteByName(name: string): Route {
-		const route = this.getRoute({ name });
+	/** Lookup a route by name. Throws if none is registered under that name. */
+	get(name: string): Route {
+		const route = this.find({ name });
 		if (!route) {
 			const msg = `No route named ${name}`;
 			logger.error(msg);
 			throw new Error(msg);
 		}
 		return route;
+	}
+
+	/** Find a route by arbitrary field equality. Returns undefined when none match. */
+	find(query: Record<string, unknown>): Route | undefined {
+		return this.routes.find((route) =>
+			Object.entries(query).every(
+				([key, value]) => (route as Record<string, unknown>)[key] === value,
+			),
+		);
 	}
 
 	/**
@@ -119,16 +118,13 @@ export class Router {
 		throw error;
 	}
 
-	onGo(listener: GoListener): void {
-		this.listeners.push(listener);
-	}
-
+	/**
+	 * Resolve an input. Kept as an alias for {@link match} so `Router` can be used
+	 * directly in tests without going through a store. The store's `go` (in
+	 * history.ts) is what apps use — it updates history and notifies listeners.
+	 */
 	go(input: Input): MatchResult {
-		const match = this.match(input);
-		for (const listener of this.listeners) {
-			listener(match);
-		}
-		return match;
+		return this.match(input);
 	}
 
 	#match(input: InputObject): MatchResult | false {

@@ -12,7 +12,7 @@ import {
 import type { InputObject, Params, RouteConfig, RouteRedirect } from "./types";
 
 const REQUIRED_PARAMS = ["name", "pattern", "page"] as const;
-const RESERVED_PARAMS = ["is", "match", "buildUrl"];
+const RESERVED_PARAMS = ["is", "match", "href"];
 
 /** Convert a URLSearchParams into params, arraying repeated keys. */
 function searchToParams(search: URLSearchParams): Params {
@@ -70,7 +70,8 @@ export class Route {
 		return this.name === test;
 	}
 
-	buildUrl(params: Params = {}): string {
+	/** Build a URL for this route from the given params. */
+	href(params: Params = {}): string {
 		const { path, consumed } = compilePath(this.pattern, params);
 		const query = new URLSearchParams();
 		for (const [key, value] of Object.entries(params)) {
