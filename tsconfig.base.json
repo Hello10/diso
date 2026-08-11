@@ -8,6 +8,7 @@
 		"sourceMap": true,
 		"verbatimModuleSyntax": true,
 		"noImplicitOverride": true,
-		"noFallthroughCasesInSwitch": true
+		"noFallthroughCasesInSwitch": true,
+		"ignoreDeprecations": "6.0"
 	}
 }

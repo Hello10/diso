@@ -110,8 +110,7 @@ export function useSearchParams(): [
 			const current = new URLSearchParams(
 				store.getSnapshot().url.split("?")[1] ?? "",
 			);
-			const next =
-				typeof updater === "function" ? updater(current) : updater;
+			const next = typeof updater === "function" ? updater(current) : updater;
 			const path = store.getSnapshot().url.split("?")[0] ?? "";
 			const qs = next.toString();
 			store.go(qs ? `${path}?${qs}` : path, options);

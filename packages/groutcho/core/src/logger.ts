@@ -1,6 +1,10 @@
 // Tiny zero-dependency debug logger. Silent by default; enable with
 // `logger.enable()` or by setting DEBUG=groutcho in a Node environment.
 
+// Ambient declaration so TS doesn't require @types/node in this framework-
+// agnostic package. The runtime `typeof` guard is what keeps this safe.
+declare const process: { env?: Record<string, string | undefined> } | undefined;
+
 let enabled = false;
 try {
 	const debug = typeof process !== "undefined" ? process.env?.DEBUG : undefined;

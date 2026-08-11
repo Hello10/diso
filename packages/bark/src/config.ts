@@ -1,6 +1,10 @@
 import { makeMatcher, parseRules } from "./matcher";
 import type { BarkRecord, Formatter, Level, Sink } from "./record";
 
+// Ambient: bark is framework-agnostic (no @types/node). The `typeof process`
+// runtime guard is what keeps this safe across browser/worker/node.
+declare const process: { env?: Record<string, string | undefined> } | undefined;
+
 /** Pretty formatter: readable in browser devtools and `wrangler dev`. */
 export const pretty: Formatter = (record) => {
 	const parts: unknown[] = [];

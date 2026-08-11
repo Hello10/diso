@@ -32,11 +32,11 @@
 		"@biomejs/biome": "^2.5.7",
 		"@hello10/config-biome": "^1.0.0",
 		"@hello10/config-typescript": "^1.0.0",
-		"@types/node": "^24.3.0",
+		"@types/node": "^26.2.0",
 		"tsup": "^8.5.0",
 		"turbo": "^2.10.9",
-		"typescript": "^5.9.2",
-		"vitest": "^3.2.4"
+		"typescript": "^6.0.3",
+		"vitest": "^4.1.10"
 	},
 	"packageManager": "pnpm@11.20.0"
 }
