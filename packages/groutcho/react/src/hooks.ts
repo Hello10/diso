@@ -1,5 +1,6 @@
 import type {
 	GoListener,
+	GoOptions,
 	Input,
 	MatchResult,
 	Route,
@@ -12,6 +13,7 @@ import {
 	useCallback,
 	useContext,
 	useEffect,
+	useMemo,
 	useRef,
 	useSyncExternalStore,
 } from "react";
@@ -59,9 +61,53 @@ export function useMatch(store?: RouterStore): MatchResult {
 }
 
 /** A stable `go` function for the context store. */
-export function useGo(): (input: Input) => MatchResult {
+export function useGo(): (input: Input, options?: GoOptions) => MatchResult {
 	const store = useRouter();
-	return useCallback((input: Input) => store.go(input), [store]);
+	return useCallback(
+		(input: Input, options?: GoOptions) => store.go(input, options),
+		[store],
+	);
+}
+
+/**
+ * Read/write the URL query string. Read side re-renders on nav (via `useMatch`);
+ * write side rebuilds the URL keeping pathname+hash and calls `store.go` with the
+ * updated query. Pass `{ replace: true }` to overwrite the history entry.
+ *
+ * ```ts
+ * const [params, setParams] = useSearchParams();
+ * const view = params.get("view");
+ * setParams((prev) => { prev.set("view", "grid"); return prev; }, { replace: true });
+ * ```
+ */
+export type SearchParamsUpdater =
+	| URLSearchParams
+	| ((prev: URLSearchParams) => URLSearchParams);
+
+export function useSearchParams(): [
+	URLSearchParams,
+	(updater: SearchParamsUpdater, options?: GoOptions) => void,
+] {
+	const store = useRouter();
+	const match = useMatch(store);
+	const params = useMemo(
+		() => new URLSearchParams(match.url.split("?")[1] ?? ""),
+		[match.url],
+	);
+	const setParams = useCallback(
+		(updater: SearchParamsUpdater, options?: GoOptions) => {
+			const current = new URLSearchParams(
+				store.getSnapshot().url.split("?")[1] ?? "",
+			);
+			const next =
+				typeof updater === "function" ? updater(current) : updater;
+			const path = store.getSnapshot().url.split("?")[0] ?? "";
+			const qs = next.toString();
+			store.go(qs ? `${path}?${qs}` : path, options);
+		},
+		[store],
+	);
+	return [params, setParams];
 }
 
 /**

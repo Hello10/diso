@@ -145,6 +145,11 @@ export type ErrorListener = (error: RouteError | undefined) => void;
  * Naming: the router action is `go` everywhere. Subscriptions to that action
  * are `onGo`. Never `navigate`.
  */
+export interface GoOptions {
+	/** Replace the current history entry instead of pushing a new one. */
+	replace?: boolean;
+}
+
 export interface RouterStore {
 	readonly router: Router;
 	readonly history: History;
@@ -152,8 +157,12 @@ export interface RouterStore {
 	readonly errorPage: Component | undefined;
 	/** Match without navigating. */
 	match(input: Input): MatchResult;
-	/** Navigate to input, updating history and notifying subscribers. */
-	go(input: Input): MatchResult;
+	/**
+	 * Navigate to input, updating history and notifying subscribers. Pass
+	 * `{ replace: true }` to overwrite the current history entry (useful for
+	 * search-param edits that shouldn't add a back button entry).
+	 */
+	go(input: Input, options?: GoOptions): MatchResult;
 	/** Shortcut for `router.get(name)` — look up a route by name. */
 	get(name: string): Route;
 	/** Current resolved match for the location. */
@@ -252,10 +261,18 @@ export function createRouter(config: RouterStoreConfig): RouterStore {
 		history,
 		errorPage,
 		match: (input) => router.match(input),
-		go(input) {
+		go(input, options) {
 			const prev = snapshot;
 			const match = router.go(input);
 			if (match.url && !isExternal(match.url)) {
+				if (options?.replace) {
+					// history.replace is silent; drive snapshot + emit ourselves.
+					history.replace(match.url);
+					snapshot = stamp(match);
+					applyRouteTitle();
+					emitSnapshot(prev);
+					return snapshot;
+				}
 				// Route through history; its notification drives snapshot + emit once
 				// (refresh() will stamp the new match with a fresh key). Return the
 				// resulting snapshot so callers see the same object subscribers do.

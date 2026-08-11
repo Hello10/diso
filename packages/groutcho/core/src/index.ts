@@ -4,6 +4,7 @@ export {
 	createRouter,
 	type ErrorListener,
 	type GoListener,
+	type GoOptions,
 	type History,
 	type RouterStore,
 	type RouterStoreConfig,

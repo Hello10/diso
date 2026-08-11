@@ -2,6 +2,7 @@ export type {
 	Component,
 	ErrorListener,
 	GoListener,
+	GoOptions,
 	History,
 	Input,
 	InputObject,
@@ -30,6 +31,7 @@ export {
 } from "@diso.io/groutcho";
 export { RouterContext } from "./context";
 export {
+	type SearchParamsUpdater,
 	useError,
 	useGo,
 	useMatch,
@@ -37,6 +39,7 @@ export {
 	useRoute,
 	useRouter,
 	useRouterStore,
+	useSearchParams,
 	useTitle,
 } from "./hooks";
 export { Link, type LinkProps } from "./Link";

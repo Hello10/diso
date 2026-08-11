@@ -18,6 +18,7 @@ import {
 	useMatch,
 	useOnGo,
 	useRoute,
+	useSearchParams,
 	useTitle,
 } from "../src/index";
 
@@ -293,6 +294,43 @@ describe("groutcho-react", () => {
 		expect(screen.getByTestId("shell").textContent).toContain(
 			"shell:section:page:hello",
 		);
+	});
+
+	it("useSearchParams reads current query and writes updates", () => {
+		function View() {
+			const [params, setParams] = useSearchParams();
+			return (
+				<div>
+					<span data-testid="view">{params.get("view") ?? ""}</span>
+					<button
+						type="button"
+						onClick={() =>
+							setParams(
+								(prev) => {
+									prev.set("view", "grid");
+									return prev;
+								},
+								{ replace: true },
+							)
+						}
+					>
+						grid
+					</button>
+				</div>
+			);
+		}
+		render(
+			<RouterProvider
+				routes={routes}
+				redirects={redirects}
+				history={createMemoryHistory("/?view=list")}
+			>
+				<View />
+			</RouterProvider>,
+		);
+		expect(screen.getByTestId("view").textContent).toBe("list");
+		fireEvent.click(screen.getByText("grid"));
+		expect(screen.getByTestId("view").textContent).toBe("grid");
 	});
 
 	it("layout instance persists across sibling nav (same layout identity)", () => {

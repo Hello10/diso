@@ -540,6 +540,20 @@ describe("groutcho", () => {
 			expect(cb).toHaveBeenCalledWith(err);
 		});
 
+		it("go({ replace: true }) uses history.replace and skips a new entry", () => {
+			const store = build();
+			// push a normal entry so back() has somewhere to go
+			store.go("/show/a");
+			const midKey = store.getSnapshot().key;
+			// replace: shouldn't push a new stack entry, so back should return to the
+			// entry before /show/a (i.e. "/")
+			store.go("/show/b", { replace: true });
+			expect(store.getSnapshot().url).toBe("/show/b");
+			expect(store.getSnapshot().key).toBeGreaterThan(midKey);
+			store.history.back();
+			expect(store.getSnapshot().url).toBe("/");
+		});
+
 		it("destroy detaches all listeners", () => {
 			const store = build();
 			const cb = vi.fn();
