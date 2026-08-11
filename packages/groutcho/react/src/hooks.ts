@@ -3,6 +3,7 @@ import type {
 	GoOptions,
 	Input,
 	MatchResult,
+	Params,
 	Route,
 	RouteError,
 	RouterStore,
@@ -44,8 +45,18 @@ export function useRouter(): RouterStore {
 /**
  * Subscribe to the current match. Re-renders on navigation via
  * `useSyncExternalStore`. Uses the provided store or the context store.
+ *
+ * The `P` type parameter narrows `match.params` at the call site — a
+ * type-only annotation with no runtime cost. Use it when you know which
+ * params the current route defines:
+ *
+ * ```ts
+ * const { slug } = useMatch<{ slug?: string }>().params;
+ * ```
  */
-export function useMatch(store?: RouterStore): MatchResult {
+export function useMatch<P extends Params = Params>(
+	store?: RouterStore,
+): MatchResult & { params: P } {
 	const context = useContext(RouterContext);
 	const resolved = store ?? context;
 	if (!resolved) {
@@ -57,7 +68,7 @@ export function useMatch(store?: RouterStore): MatchResult {
 		resolved.subscribe,
 		resolved.getSnapshot,
 		resolved.getSnapshot,
-	);
+	) as MatchResult & { params: P };
 }
 
 /** A stable `go` function for the context store. */

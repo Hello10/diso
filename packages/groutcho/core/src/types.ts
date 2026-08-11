@@ -1,7 +1,11 @@
 import type { MatchResult } from "./MatchResult";
 
-/** Arbitrary route/query params. Values are strings (or string[] for repeats). */
-export type Params = Record<string, unknown>;
+/**
+ * Route/query params. Values come from URLPattern matching (strings) or query
+ * string parsing (string, or string[] for repeated keys), and may be
+ * `undefined` for optional path params that weren't present in the URL.
+ */
+export type Params = Record<string, string | string[] | undefined>;
 
 /**
  * Opaque component reference. Core doesn't render anything — adapters (react,

@@ -249,7 +249,7 @@ export const RouterContainer = RouterProvider;
  * `RouterProvider` (which suppresses auto-rendering) and want to place the
  * matched page somewhere inside your own layout.
  */
-export function RouterOutlet(): ReactNode {
+export function RouterOutlet() {
 	const store = useContext(RouterContext);
 	if (!store) {
 		throw new Error("RouterOutlet must be used within a <RouterProvider>");
