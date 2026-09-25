@@ -1,6 +1,6 @@
 {
 	"name": "@diso.io/groutcho-lit",
-	"version": "4.0.0-beta.0",
+	"version": "1.0.0-beta.0",
 	"description": "Lit bindings for groutcho — a ReactiveController, context, and router elements",
 	"license": "MIT",
 	"type": "module",
