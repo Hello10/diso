@@ -34,7 +34,7 @@ importers:
         version: 6.0.3
       vitest:
         specifier: ^4.1.10
-        version: 4.1.10(@types/node@26.2.0)(happy-dom@20.11.2)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.7)(yaml@2.9.0))
+        version: 4.1.10(@types/node@26.2.0)(happy-dom@21.0.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.7)(yaml@2.9.0))
 
   apps/diso.io:
     dependencies:
@@ -83,8 +83,8 @@ importers:
         specifier: ^1.1.6
         version: 1.1.6
       happy-dom:
-        specifier: ^20.11.2
-        version: 20.11.2
+        specifier: ^21.0.4
+        version: 21.0.4
       lit:
         specifier: ^3.3.1
         version: 3.3.3
@@ -105,8 +105,8 @@ importers:
         specifier: ^19.2.1
         version: 19.2.4(@types/react@19.2.18)
       happy-dom:
-        specifier: ^20.11.2
-        version: 20.11.2
+        specifier: ^21.0.4
+        version: 21.0.4
       react:
         specifier: ^19.2.0
         version: 19.2.8
@@ -1041,8 +1041,8 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
-  happy-dom@20.11.2:
-    resolution: {integrity: sha512-7MB+bJLkxu3SowAfBJbjW+c55kNz5tkR45gu2qzrxznezhLeN5YIlJbwUgSzlGc+qWoZ8Ykg71H5ezz69xixrw==}
+  happy-dom@21.0.4:
+    resolution: {integrity: sha512-tFm+GaLBgo6o0awHnvHaNoraVo27qJ+2tZEtZ+cIa08hXbeitrxAJajLI05hsUy/2/YTKcUjQYzHe5mCcraLBw==}
     engines: {node: '>=20.0.0'}
 
   joycon@3.1.1:
@@ -2167,7 +2167,7 @@ snapshots:
   fsevents@2.3.3:
     optional: true
 
-  happy-dom@20.11.2:
+  happy-dom@21.0.4:
     dependencies:
       '@types/node': 26.2.0
       '@types/whatwg-mimetype': 3.0.2
@@ -2533,7 +2533,7 @@ snapshots:
       fsevents: 2.3.3
       yaml: 2.9.0
 
-  vitest@4.1.10(@types/node@26.2.0)(happy-dom@20.11.2)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.7)(yaml@2.9.0)):
+  vitest@4.1.10(@types/node@26.2.0)(happy-dom@21.0.4)(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.7)(yaml@2.9.0)):
     dependencies:
       '@vitest/expect': 4.1.10
       '@vitest/mocker': 4.1.10(vite@8.2.1(@types/node@26.2.0)(esbuild@0.27.7)(yaml@2.9.0))
@@ -2557,7 +2557,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 26.2.0
-      happy-dom: 20.11.2
+      happy-dom: 21.0.4
     transitivePeerDependencies:
       - msw
 
