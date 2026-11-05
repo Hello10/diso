@@ -1,6 +1,6 @@
 {
 	"name": "@diso.io/bark",
-	"version": "1.0.0-beta.0",
+	"version": "1.0.0-beta.1",
 	"description": "Small, addressable structured logger — filter by name + level via one env var",
 	"license": "MIT",
 	"type": "module",
