@@ -6,3 +6,9 @@ coverage
 .vitest
 packages/*/docs
 .turbo
+*.log
+
+# dotenv environment variable files
+.env
+.env.*
+!.env.example

@@ -24,22 +24,23 @@ npm scope; each package family has its own README with full docs.
 
 ## Develop
 
+Node and pnpm are pinned in `package.json` and managed by [Vite+](https://viteplus.dev/guide/env): install the global `vp` CLI once (`curl -fsSL https://vite.plus | bash`, then `vp env on`).
+
 ```bash
-pnpm install
-pnpm build       # turbo: all packages (tsup -> ESM + .d.ts), cached
-pnpm test        # turbo: all test suites (vitest), cached
-pnpm typecheck   # turbo: tsc --noEmit (depends on upstream builds)
-pnpm lint        # biome check
-pnpm format      # biome format --write
-pnpm fix         # biome check --write (format + safe lint fixes)
+vp install
+pnpm build       # turbo: all packages (vp pack -> ESM + .d.ts), cached
+pnpm test        # turbo: all test suites (vp test), cached
+pnpm check       # vp check: format, lint, and type check
+pnpm fix         # vp check --fix (format + safe lint fixes)
 pnpm site        # run the diso.io docs site locally
-pnpm verify      # build + typecheck + test + lint (the release gate)
+pnpm verify      # build + test + check (the release gate)
 ```
 
 Stack: pnpm workspaces · [Turborepo](https://turborepo.dev) task graph/caching ·
-TypeScript (strict) · tsup · vitest · [Biome](https://biomejs.dev) lint + format.
+TypeScript (strict) · [Vite+](https://viteplus.dev) (tsdown pack, Vitest, Oxlint, Oxfmt).
 Shared configs come from [`hello10/configs`](https://github.com/hello10/configs)
-(`@hello10/config-typescript`, `@hello10/config-biome`).
+(`@hello10/config-typescript`; the Vite+ lint and format settings in
+`vite.config.ts` mirror `@hello10/config-vite-plus`).
 
 ## Release
 

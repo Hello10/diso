@@ -5,7 +5,8 @@ import {
 	type RouteConfig,
 } from "@diso.io/groutcho";
 import { html, LitElement } from "lit";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vite-plus/test";
+
 import { RouterController } from "../src/controller";
 import {
 	DisoLink,

@@ -14,29 +14,36 @@
 		"build": "turbo run build",
 		"dev": "turbo run dev",
 		"test": "turbo run test",
-		"lint": "biome check .",
-		"format": "biome format --write .",
-		"fix": "biome check --write .",
-		"typecheck": "turbo run typecheck",
+		"check": "vp check",
+		"fix": "vp check --fix",
 		"docs": "turbo run docs",
 		"site": "pnpm --filter diso-io dev",
-		"verify": "turbo run build typecheck test && biome check .",
+		"verify": "turbo run build test && vp check",
 		"version:beta": "pnpm --filter \"./packages/**\" exec npm version prerelease --preid=beta --no-git-tag-version",
 		"version:patch": "pnpm --filter \"./packages/**\" exec npm version patch --no-git-tag-version",
 		"version:minor": "pnpm --filter \"./packages/**\" exec npm version minor --no-git-tag-version",
 		"release:beta": "pnpm verify && pnpm --filter \"./packages/**\" publish --tag beta --no-git-checks",
 		"release": "pnpm verify && pnpm --filter \"./packages/**\" publish --no-git-checks",
-		"clean": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules"
+		"clean": "pnpm -r exec rm -rf dist node_modules && rm -rf node_modules",
+		"prepare": "vp config"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.5.7",
-		"@hello10/config-biome": "^1.0.0",
 		"@hello10/config-typescript": "^1.0.0",
 		"@types/node": "^26.2.0",
-		"tsup": "^8.5.0",
 		"turbo": "^2.10.9",
-		"typescript": "^6.0.3",
-		"vitest": "^4.1.10"
+		"typescript": "^7.0.2",
+		"vite-plus": "catalog:"
 	},
-	"packageManager": "pnpm@11.20.0"
+	"devEngines": {
+		"runtime": {
+			"name": "node",
+			"version": "24.22.2",
+			"onFail": "download"
+		},
+		"packageManager": {
+			"name": "pnpm",
+			"version": "12.16.1",
+			"onFail": "download"
+		}
+	}
 }
