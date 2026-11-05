@@ -36,6 +36,10 @@ pnpm site        # run the diso.io docs site locally
 pnpm verify      # build + test + check (the release gate)
 ```
 
+Run `pnpm build` once on a fresh clone before `pnpm check` or committing: the
+lit and react packages resolve `@diso.io/groutcho` through its `dist`, so type
+checking (and the pre-commit hook) fails until it exists.
+
 Stack: pnpm workspaces · [Turborepo](https://turborepo.dev) task graph/caching ·
 TypeScript (strict) · [Vite+](https://viteplus.dev) (tsdown pack, Vitest, Oxlint, Oxfmt).
 Shared configs come from [`hello10/configs`](https://github.com/hello10/configs)
