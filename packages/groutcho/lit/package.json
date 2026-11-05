@@ -37,11 +37,10 @@
 	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"scripts": {
-		"build": "tsup",
-		"dev": "tsup --watch",
-		"test": "vitest run",
-		"typecheck": "tsc --noEmit",
-		"prepublishOnly": "pnpm run build"
+		"build": "vp pack",
+		"dev": "vp pack --watch",
+		"test": "vp test",
+		"prepublishOnly": "vp run build"
 	},
 	"dependencies": {
 		"@diso.io/groutcho": "workspace:*"

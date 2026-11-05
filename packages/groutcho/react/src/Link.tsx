@@ -3,8 +3,10 @@ import type { AnchorHTMLAttributes, MouseEvent, ReactNode } from "react";
 
 import { useRouter } from "./hooks";
 
-export interface LinkProps
-	extends Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "href"> {
+export interface LinkProps extends Omit<
+	AnchorHTMLAttributes<HTMLAnchorElement>,
+	"href"
+> {
 	/**
 	 * A url or route name to navigate to. A `/`-containing string is treated as
 	 * a URL path; anything else is treated as a route name paired with `params`.

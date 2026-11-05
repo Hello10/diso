@@ -216,7 +216,9 @@ export class DisoLink extends RouterElement {
 	};
 
 	override render(): TemplateResult {
-		return html`<a href=${this.href()} @click=${this.onClick}><slot></slot></a>`;
+		return html`<a href=${this.href()} @click=${this.onClick}
+			><slot></slot
+		></a>`;
 	}
 }
 
@@ -257,7 +259,8 @@ export class DisoNavLink extends DisoLink {
 			href=${this.href()}
 			class=${active ? this.activeClass : ""}
 			@click=${this.onClick}
-			><slot></slot></a>`;
+			><slot></slot
+		></a>`;
 	}
 }
 

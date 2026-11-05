@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vite-plus";
 
 // Minimal Vite config. The dev server serves index.html for unknown paths
 // (SPA fallback), so deep links like /groutcho-lit resolve to the router.

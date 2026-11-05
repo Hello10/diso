@@ -24,22 +24,28 @@ npm scope; each package family has its own README with full docs.
 
 ## Develop
 
-```bash
-pnpm install
-pnpm build       # turbo: all packages (tsup -> ESM + .d.ts), cached
-pnpm test        # turbo: all test suites (vitest), cached
-pnpm typecheck   # turbo: tsc --noEmit (depends on upstream builds)
-pnpm lint        # biome check
-pnpm format      # biome format --write
-pnpm fix         # biome check --write (format + safe lint fixes)
-pnpm site        # run the diso.io docs site locally
-pnpm verify      # build + typecheck + test + lint (the release gate)
+```sh
+curl -fsSL https://vite.plus | bash   # once per machine; then `vp env on`
+vp install          # also installs the pre-commit hook (vp staged)
+vp run build        # turbo: all packages (vp pack -> ESM + .d.ts), cached
+vp run test         # turbo: all test suites (vp test), cached
+vp check            # format, lint, and type checks
+vp check --fix
+vp run site         # run the diso.io docs site locally
+vp run verify       # build + test + check (the release gate)
 ```
 
+Run `vp run build` once on a fresh clone before `vp check` or committing: the
+lit and react packages resolve `@diso.io/groutcho` through its `dist`, so type
+checking (and the pre-commit hook) fails until it exists.
+
 Stack: pnpm workspaces · [Turborepo](https://turborepo.dev) task graph/caching ·
-TypeScript (strict) · tsup · vitest · [Biome](https://biomejs.dev) lint + format.
-Shared configs come from [`hello10/configs`](https://github.com/hello10/configs)
-(`@hello10/config-typescript`, `@hello10/config-biome`).
+TypeScript (strict) · [Vite+](https://viteplus.dev) (tsdown pack, Vitest, Oxlint, Oxfmt).
+Node and pnpm are pinned in `devEngines` in `package.json` and managed by the
+global `vp` CLI ([docs](https://viteplus.dev/guide/env)). Shared configs come
+from [`hello10/configs`](https://github.com/hello10/configs):
+`@hello10/config-typescript` and `@hello10/config-vite-plus` (lint, format,
+staged); `pack` and `test` live in each package's `vite.config.ts`.
 
 ## Release
 
